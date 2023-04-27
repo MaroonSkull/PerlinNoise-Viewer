@@ -4,3 +4,6 @@
 [submodule "dependencies/glfw"]
 	path = dependencies/glfw
 	url = https://github.com/glfw/glfw
+[submodule "dependencies/PerlinNoise-Kernel"]
+	path = dependencies/PerlinNoise-Kernel
+	url = https://github.com/MaroonSkull/PerlinNoise-Kernel
