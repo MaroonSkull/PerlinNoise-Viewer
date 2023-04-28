@@ -38,9 +38,9 @@ target_include_directories (imgui PUBLIC imgui/)
 target_compile_definitions (imgui PUBLIC -DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
 #PerlinNoise-Kernel
-add_subdirectory (PerlinNoise-Kernel)
+#[[add_subdirectory (PerlinNoise-Kernel)
 target_link_libraries (PerlinNoise-Viewer INTERFACE PerlinNoise-Kernel)
-#target_include_directories (PerlinNoise-Kernel INTERFACE PerlinNoise-Kernel)
+#target_include_directories (PerlinNoise-Kernel INTERFACE PerlinNoise-Kernel)]]
 
 
 # public linkage
