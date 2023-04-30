@@ -1,5 +1,5 @@
 # PerlinNoise
-Simple viewer for my [https://github.com/MaroonSkull/PerlinNoise-Kernel](Perlin noise generator).
+Simple viewer for my [Perlin noise generator](https://github.com/MaroonSkull/PerlinNoise-Kernel).
 
 List of targets
 ==
