@@ -1,13 +1,11 @@
-﻿#include "Services/Definitions.hpp"
-
-std::mt19937 gen{ std::random_device{}() };
+﻿//#include "Services/Definitions.hpp"
+#include <iostream>
+/*std::mt19937 gen{std::random_device{}()};
 std::normal_distribution vectorGenerator{ .0, .5 }; //95.45% значений внутри [-1, 1]
 std::uniform_int_distribution eventlyGen{ 2, 15 };
-std::uniform_int_distribution dotsGen{ 10, 50 };
-
+std::uniform_int_distribution dotsGen{ 10, 50 };*/
 // todo сделать локальной, разбить на глобальное состояние и на локальные мелкие
-Params p{ [&]() -> float { return std::clamp(vectorGenerator(gen), -1., 1.); },
-		static_cast<uint32_t>(eventlyGen(gen)), static_cast<uint32_t>(dotsGen(gen)), static_cast<uint32_t>(eventlyGen(gen)) };
+//Params1D p;
 
 
 
@@ -16,6 +14,14 @@ Params p{ [&]() -> float { return std::clamp(vectorGenerator(gen), -1., 1.); },
 */
 
 int main() {
+/*	p.controlPoints = 5;
+	p.octaveNum = 3;
+	p.k.reserve(5);
+	p.k.push_back(-0.2);
+	p.k.push_back(-0.3);
+	p.k.push_back(0.3);
+	p.k.push_back(0.6);
+	p.k.push_back(-0.2);
 	try {
 
 		Window MainWindow(1800, 600, "Perlin Noise Generator", GLFWErrorCallback, framebufferSizeCallback);
@@ -27,13 +33,10 @@ int main() {
 			static_cast<uint32_t>(eventlyGen(gen)),
 			static_cast<uint32_t>(dotsGen(gen)),
 			static_cast<uint32_t>(eventlyGen(gen))
-		};*/
+		};*
 
 		PerlinNoise(MainWindow, "shaders/1D/1D_noise.vert", "shaders/1D/1D_white.vert", "shaders/1D/1D.frag");
 
-	}
-	catch (const cudaWrp::ErrorException& e) {
-		std::cerr << e.getError();
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Standard exception: " << e.what() << std::endl;
@@ -46,13 +49,14 @@ int main() {
 	}
 
 	glfwTerminate();
-	cudaWrp::destroyContext();
+	*/
 
+	std::cout << "build test" << std::endl;
 	return 0;
 }
 
 
-int PerlinNoise(Window& MainWindow, std::string_view vertexShaderPathNoise, std::string_view vertexShaderPathLinear, std::string_view fragmentShaderPath) {
+/*int PerlinNoise(Window& MainWindow, std::string_view vertexShaderPathNoise, std::string_view vertexShaderPathLinear, std::string_view fragmentShaderPath) {
 
 	Shader PlotShader(vertexShaderPathLinear, fragmentShaderPath);
 	Shader PerlinShader(vertexShaderPathNoise, fragmentShaderPath);
@@ -60,9 +64,7 @@ int PerlinNoise(Window& MainWindow, std::string_view vertexShaderPathNoise, std:
 	Background BackgroundLayer(MainWindow, p);
 	// todo разбить Plot на сетку и на класс для угловых наклонов
 	Plot PlotLayer(MainWindow, PlotShader, p);
-	//Plot PlotLayer1(MainWindow, PlotShader, p1);
 	Perlin PerlinLayer(MainWindow, PerlinShader, p);
-	//Perlin PerlinLayer1(MainWindow, PerlinShader, p1);
 	GUI GUILayer(MainWindow, p);
 
 	glfwSetScrollCallback(MainWindow.getWindow(), scrollCallback);
@@ -82,9 +84,7 @@ int PerlinNoise(Window& MainWindow, std::string_view vertexShaderPathNoise, std:
 		// Drawing
 		BackgroundLayer.draw();
 		PlotLayer.draw();
-		//PlotLayer1.draw();
 		PerlinLayer.draw();
-		//PerlinLayer1.draw();
 		GUILayer.draw();
 
 		// Swap buffers
@@ -93,39 +93,39 @@ int PerlinNoise(Window& MainWindow, std::string_view vertexShaderPathNoise, std:
 	}
 
 	return 0;
-}
+}*/
 
 // Обработка любых ошибок GLFW
-void GLFWErrorCallback(int error, const char* description) {
+/*void GLFWErrorCallback(int error, const char* description) {
 	std::cerr << stderr << std::endl << "Glfw Error " << error << ", " << description << std::endl;
-}
+}*/
 
 // Обработка ресайза окна
-void framebufferSizeCallback(GLFWwindow* window, int32_t width, int32_t height) {
+/*void framebufferSizeCallback(GLFWwindow* window, int32_t width, int32_t height) {
 	glViewport(0, 0, width, height);
-}
+}*/
 
 // Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш
 // на клавиатуре в данном кадре и соответствующая обработка данных событий
-void processInput(GLFWwindow* window) {
+/*void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-}
+}*/
 
 // изменение угла наклона активной прямой
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-	p.k_.at(p.activeId_) -= yoffset;
+//void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+	/*p.k_.at(p.activeId_) -= yoffset;
 	p.k_.at(p.activeId_) = std::clamp(p.k_.at(p.activeId_), -1.f, 1.f);
 
 	if (p.activeId_ == 0)
 		p.k_.back() = p.k_.at(0);
 	else if (p.activeId_ == p.k_.size() - 1)
-		p.k_.at(0) = p.k_.back();
-}
+		p.k_.at(0) = p.k_.back();*/
+//}
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+//void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	// выбор активной прямой
-	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+	/*if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
 		p.incrActive();
 	}
 	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
@@ -168,5 +168,5 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			p.dx_ = 100;
 		else if (action == GLFW_RELEASE)
 			p.dx_ = 1;
-	}
-}
+	}*/
+//}
