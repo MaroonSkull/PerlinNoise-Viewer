@@ -1,9 +1,6 @@
-[submodule "dependencies/imgui"]
-	path = dependencies/imgui
-	url = https://github.com/ocornut/imgui
-[submodule "dependencies/glfw"]
-	path = dependencies/glfw
-	url = https://github.com/glfw/glfw
 [submodule "dependencies/PerlinNoise-Kernel"]
 	path = dependencies/PerlinNoise-Kernel
 	url = https://github.com/MaroonSkull/PerlinNoise-Kernel
+[submodule "dependencies/glfwpp"]
+	path = dependencies/glfwpp
+	url = https://github.com/janekb04/glfwpp
