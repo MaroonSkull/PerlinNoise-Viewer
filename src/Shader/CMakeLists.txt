@@ -7,11 +7,11 @@ add_library (${ShaderLib} STATIC
 	1D/1D.vert
 	1D/1D_noise.vert
 	1D/1D_white.vert]]
-	Shader.hpp
+	${CMAKE_SOURCE_DIR}/include/Shader/Shader.hpp
 	Shader.cpp
 )
 
-message ("lol: " ${CMAKE_SOURCE_DIR}/include/Shader)
+
 target_include_directories (${ShaderLib} PUBLIC ${CMAKE_SOURCE_DIR}/include/Shader)
 
 target_compile_features (${ShaderLib} PUBLIC cxx_std_17)
