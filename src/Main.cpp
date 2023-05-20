@@ -1,7 +1,14 @@
 ﻿#include <iostream>
-#include <GL/glew.h>
+#include <glad/gl.h>
 #include <glfwpp/glfwpp.h>
 
+
+// Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш
+// на клавиатуре в данном кадре и соответствующая обработка данных событий
+void processInput(glfw::Window& window) {
+	if (window.getKey(glfw::KeyCode::Escape))
+		window.setShouldClose(true);
+}
 
 int main() {
 	auto GLFW = glfw::init(); // RAII GLFW
@@ -17,16 +24,18 @@ int main() {
 
 		int version = gladLoadGL(glfw::getProcAddress);
 		if (version == 0) {
-			printf("Failed to initialize OpenGL context\n");
+			std::cerr << "Failed to initialize OpenGL context" << std::endl;
 			return -1;
-		}
-		printf("Loaded OpenGL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+		} 
+		std::cerr << "Loaded OpenGL " << GLAD_VERSION_MAJOR(version) << "." << GLAD_VERSION_MINOR(version) << std::endl;
 
 		while (!window.shouldClose()) {
-			double time = glfw::getTime();
-			glClearColor((sin(time) + 1.0) / 2.0, (cos(time) + 1.0) / 2.0, (-sin(time) + 1.0) / 2.0, 0.0);
+			auto time{ glfw::getTime() };
+			auto alpha{ 1. };
+			glClearColor((sin(alpha * time) + 1.0) / 2.0, (cos(alpha * time) + 1.0) / 2.0, (-sin(alpha * time) + 1.0) / 2.0, 0.0);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			processInput(window);
 			glfw::pollEvents();
 			window.swapBuffers();
 		}
@@ -45,12 +54,4 @@ int main() {
 	}
 	
 	return 0;
-}
-
-// Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш
-// на клавиатуре в данном кадре и соответствующая обработка данных событий
-void processInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	
 }
