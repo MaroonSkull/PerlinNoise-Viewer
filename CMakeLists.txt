@@ -1,23 +1,28 @@
 ﻿# main cmake file
 cmake_minimum_required (VERSION 3.19)
 
+include (cmake/prevent_in_source_builds.cmake)
+
 project (PNV
-    VERSION 1.0.1
-    DESCRIPTION "Perlin noise viewer for [Perlin noise generator](https://github.com/MaroonSkull/PerlinNoise-Kernel)."
+    VERSION 1.1
+    DESCRIPTION "Perlin noise viewer for [Perlin noise kernel](https://github.com/MaroonSkull/PerlinNoise-Kernel)."
     HOMEPAGE_URL https://github.com/MaroonSkull/PerlinNoise-Kernel
     LANGUAGES CXX
 )
 
-include(cmake/utils.cmake)
+include (cmake/utils.cmake)
+
+# set project options
+option (PNV_PREFER_BUNDLED_THIRD_PARTIES "Prefer bundled over system variants of third party libraries" ON)
 
 # include 3rd party libraries & our code
-add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/dependencies)
-add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_subdirectory (dependencies)
+add_subdirectory (src)
 
 find_package (OpenGL REQUIRED)
 
 # TODO: this solution is only for installed version, need to add bundled.
-find_package (PNK REQUIRED)
+find_package (PNK CONFIG REQUIRED)
 
 # set external dependencies list
 # glfwpp has public linkage of glew, glfw & imgui
