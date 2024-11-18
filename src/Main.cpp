@@ -1,7 +1,27 @@
 ﻿#include <iostream>
+#include <cmath>
 #include <glad/gl.h>
 #include <glfwpp/glfwpp.h>
 
+// passing by value is OK 
+void handle_eptr(std::exception_ptr eptr) {
+	try {
+		if (eptr)
+			std::rethrow_exception(eptr);
+	}
+	catch (const glfw::Error &e) {
+		std::cerr << "glfwpp exception: " << e.what() << std::endl;
+	}
+	catch (const std::exception &e) {
+		std::cerr << "Standard exception: " << e.what() << std::endl;
+	}
+	catch (const char *e) {
+		std::cerr << e << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unknown exception." << std::endl;
+	}
+}
 
 // Обработка всех событий ввода: запрос GLFW о нажатии/отпускании клавиш
 // на клавиатуре в данном кадре и соответствующая обработка данных событий
@@ -10,8 +30,16 @@ void processInput(glfw::Window& window) {
 		window.setShouldClose(true);
 }
 
+/**
+ * @brief Main function.
+ * @details 
+ * @todo Try to restart the application after a crash, add counter. If more than 3 times in a row, terminate.
+ */
 int main() {
+	std::exception_ptr eptr;
+
 	auto GLFW = glfw::init(); // RAII GLFW
+
 	try {
 		glfw::WindowHints hints;
 		hints.clientApi = glfw::ClientApi::OpenGl;
@@ -40,18 +68,12 @@ int main() {
 			window.swapBuffers();
 		}
 	}
-	catch (const glfw::Error &e) {
-		std::cerr << "glfwpp exception: " << e.what() << std::endl;
+	catch(...)
+	{
+		eptr = std::current_exception(); // capture
 	}
-	catch (const std::exception &e) {
-		std::cerr << "Standard exception: " << e.what() << std::endl;
-	}
-	catch (const char *e) {
-		std::cerr << e << std::endl;
-	}
-	catch (...) {
-		std::cerr << "Unknown exception." << std::endl;
-	}
+
+	handle_eptr(eptr);
 	
 	return 0;
 }
