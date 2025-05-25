@@ -7,3 +7,6 @@
 [submodule "dependencies/imgui/imgui"]
 	path = dependencies/imgui/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "dependencies/implot/implot"]
+	path = dependencies/implot/implot
+	url = https://github.com/epezent/implot.git

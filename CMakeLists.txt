@@ -60,6 +60,7 @@ set (dependenciesList
   GLFWPP
   glm::glm
   imgui
+  implot
 )
 
 # link libraries

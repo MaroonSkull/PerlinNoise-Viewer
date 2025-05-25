@@ -10,8 +10,11 @@ add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/glfwpp)
 # glm
 add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/glm)
 
-#imgui
+# imgui
 add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+
+# implot
+add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/implot)
 
 #PerlinNoise-Kernel
 # This is bundled so we don't need to install it

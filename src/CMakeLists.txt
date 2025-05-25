@@ -4,7 +4,7 @@ project (${PROJECT_NAME} LANGUAGES CXX)
 
 add_executable (${PROJECT_NAME} "Main.cpp")
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_SOURCE_DIR}/include)
-target_compile_features (${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features (${PROJECT_NAME} PUBLIC cxx_std_20)
 
 #include our code
 foreach (library ${srcsList})
