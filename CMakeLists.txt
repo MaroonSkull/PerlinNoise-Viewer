@@ -5,7 +5,7 @@ project (PNV
   VERSION 1.1
   DESCRIPTION "Perlin noise viewer for [Perlin noise kernel](https://github.com/MaroonSkull/PerlinNoise-Kernel)."
   HOMEPAGE_URL https://github.com/MaroonSkull/PerlinNoise-Kernel
-  LANGUAGES CXX
+  LANGUAGES C CXX
 )
 
 #include (cmake/prevent_in_source_builds.cmake)
@@ -58,6 +58,7 @@ set (dependenciesList
   PNK::PNK
   glad
 #  GLFWPP
+  glm::glm
   imgui
 )
 
