@@ -10,3 +10,13 @@ target_compile_features (${PROJECT_NAME} PUBLIC cxx_std_17)
 foreach (library ${srcsList})
     add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/${library})
 endforeach ()
+
+if (CMAKE_CUDA_COMPILER AND USE_CUDA_IF_AVAILABLE)
+  # CUDA debug
+  target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-g -G>)
+
+  set_source_files_properties(Main.cpp PROPERTIES LANGUAGE CUDA)
+else()
+endif()
+
+unset(USE_CUDA_IF_AVAILABLE CACHE)

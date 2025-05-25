@@ -4,8 +4,8 @@
 add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/glad)
 
 # GLFWPP
-set (GLFWPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # disable building examples
-add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/glfwpp)
+#set (GLFWPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # disable building examples
+#add_subdirectory_checked (${CMAKE_CURRENT_SOURCE_DIR}/glfwpp)
 
 #imgui
 add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/imgui)
