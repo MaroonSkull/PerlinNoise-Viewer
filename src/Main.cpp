@@ -44,11 +44,11 @@ void processInput(glfw::Window &window) {
 }
 
 // Функция-генератор для ImPlot
-ImPlotPoint Getter(int idx, void* data) {
-    auto* y_data = static_cast<std::vector<float>*>(data);
-    float x = 0 + idx * 1.0;
-    float y = (*y_data)[idx];
-    return ImPlotPoint(x, y);
+ImPlotPoint Getter(int idx, void *data) {
+  auto *y_data = static_cast<std::vector<float> *>(data);
+  float x = 0 + idx * 1.0;
+  float y = (*y_data)[idx];
+  return ImPlotPoint(x, y);
 }
 
 /**
@@ -70,7 +70,7 @@ int main() {
     hints.contextVersionMinor = 3;
     hints.apply();
 
-    glfw::Window window{800, 600, "Perlin Noise Viewer"};
+    glfw::Window window{1920, 1080, "Perlin Noise Viewer"};
     glfw::makeContextCurrent(window);
 
     int version = gladLoadGL(glfw::getProcAddress);
@@ -82,36 +82,26 @@ int main() {
               << GLAD_VERSION_MINOR(version) << std::endl;
 
     ImGui::CreateContext();
+    ImGui::GetStyle().ScaleAllSizes(2.0f); // Масштабирование
     ImGui_ImplOpenGL3_Init(); // #define IMGUI_IMPL_OPENGL_LOADER_GLAD
     ImGui_ImplGlfw_InitForOpenGL(window, true); // #define IMGUI_IMPL_GLFWD_API
     ImPlot::CreateContext();
 
+    auto perlin = PimplPerlinFactory::createPerlin();
+    perlin->numberOfDimensions_ = 1;
+    perlin->pointsBetweenGradients_ = 800;
+    perlin->numberOfGradients_ = 10;
+    perlin->numberOfOctaves_ = 4;
+    perlin->lacunarity_ = 2.0;
+    perlin->persistence_ = 0.5;
+
     while (!window.shouldClose()) {
       // Clear buffers
-      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      auto perlin = PimplPerlinFactory::createPerlin();
-      perlin->numberOfDimensions_ = 1;
-      perlin->pointsBetweenGradients_ = 8;
-      perlin->numberOfGradients_ = 3;
-      perlin->numberOfOctaves_ = 0;
-      perlin->lacunarity_ = 2;
-      perlin->persistence_ = 2;
-      auto noise = perlin->getNoise();
-
-      std::cout << "Noise values: ";
-      for (const auto &val : noise) {
-        std::cout << val << " ";
-      }
-      std::cout << std::endl;
-
-      // ImGui::Begin("My Window");
-      // if (ImPlot::BeginPlot("My Plot")) {
-      //   ImPlot::PlotLine("My Line Plot", x_data, y_data, 1000);
-      //   ImPlot::EndPlot();
-      // }
-      // ImGui::End();
+      auto &gradients = perlin->initializeGradients();
+      auto &noise = perlin->getNoise();
 
       // Start ImGui frame
       ImGui_ImplOpenGL3_NewFrame();
@@ -120,14 +110,51 @@ int main() {
 
       // Get current window size
       auto [width, height] = window.getSize();
+      // Устанавливаем фиксированный размер и позицию окна
+      ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+      ImGui::SetNextWindowSize(ImVec2(500, height), ImGuiCond_Always);
+      if (ImGui::Begin("Settings", nullptr,
+                       ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                           ImGuiWindowFlags_NoCollapse)) {
 
-      // Set ImGui window to 90% of main window size
-      ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+        // Элементы управления для параметров шума
+        ImGui::Text("Settings");
+        ImGui::Separator();
 
-      // Create a window with a plot
-      if (ImGui::Begin("Plot", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-        // Begin a plot
-        if (ImPlot::BeginPlot("My Plot")) {
+        ImGui::SliderInt("Gradients count", &perlin->numberOfGradients_, 2,
+                         100);
+        ImGui::SliderInt("Points between gradients",
+                         &perlin->pointsBetweenGradients_, 10, 100000);
+        ImGui::SliderInt("Ocataves", &perlin->numberOfOctaves_, 0, 16);
+        ImGui::SliderFloat("Lacunarity", &perlin->lacunarity_, 0.5f, 4.0f);
+        ImGui::SliderFloat("Persistance", &perlin->persistence_, 0.1f, 1.5f);
+
+        ImGui::Text("Gradients");
+        ImGui::Separator();
+
+        // Динамическое добавление слайдеров для каждого градиента, кроме
+        // последнего
+        if (!gradients.empty()) {
+          for (size_t i = 0; i < gradients.size() - 1; ++i) {
+            char buffer[32];
+            snprintf(buffer, sizeof(buffer), "Gradient##%zu", i);
+            ImGui::SliderFloat(buffer, &gradients[i], -1.0f, 1.0f);
+          }
+        }
+      }
+      ImGui::End();
+
+      // Для основного окна графика:
+      ImGui::SetNextWindowPos(ImVec2(500, 0),
+                              ImGuiCond_Always); // Сдвигаем вправо
+      ImGui::SetNextWindowSize(ImVec2(width - 500, height),
+                               ImGuiCond_Always); // Оставляем место для панели
+
+      if (ImGui::Begin("Plot", nullptr,
+                       ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                           ImGuiWindowFlags_NoCollapse)) {
+        ImPlot::SetNextAxesLimits(0, noise.size(), -1.1, 1.1, ImGuiCond_Always);
+        if (ImPlot::BeginPlot("My Plot", ImVec2(-1, -1))) {
           ImPlot::PlotLineG("Line", Getter, &noise, noise.size());
           ImPlot::EndPlot();
         }
