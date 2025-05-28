@@ -16,9 +16,10 @@
 
 #include <Perlin.hpp>
 
-#include <cmath>
 #include <iostream>
 #include <vector>
+
+float DELTA_X = 1.0f;
 
 // passing by value is OK
 void handle_eptr(std::exception_ptr eptr) {
@@ -46,7 +47,7 @@ void processInput(glfw::Window &window) {
 // Функция-генератор для ImPlot
 ImPlotPoint Getter(int idx, void *data) {
   auto *y_data = static_cast<std::vector<float> *>(data);
-  float x = 0 + idx * 1.0;
+  float x = idx * DELTA_X;
   float y = (*y_data)[idx];
   return ImPlotPoint(x, y);
 }
@@ -82,7 +83,9 @@ int main() {
               << GLAD_VERSION_MINOR(version) << std::endl;
 
     ImGui::CreateContext();
-    ImGui::GetStyle().ScaleAllSizes(2.0f); // Масштабирование
+    ImGui::StyleColorsLight();
+    ImGui::GetStyle().ScaleAllSizes(1.0f); // Масштабирование
+    ImGui::GetIO().FontGlobalScale = 1.3f;
     ImGui_ImplOpenGL3_Init(); // #define IMGUI_IMPL_OPENGL_LOADER_GLAD
     ImGui_ImplGlfw_InitForOpenGL(window, true); // #define IMGUI_IMPL_GLFWD_API
     ImPlot::CreateContext();
@@ -102,6 +105,7 @@ int main() {
 
       auto &gradients = perlin->initializeGradients();
       auto &noise = perlin->getNoise();
+      DELTA_X = 1.0 / perlin->pointsBetweenGradients_;
 
       // Start ImGui frame
       ImGui_ImplOpenGL3_NewFrame();
@@ -118,8 +122,8 @@ int main() {
                            ImGuiWindowFlags_NoCollapse)) {
 
         // Элементы управления для параметров шума
-        ImGui::Text("Settings");
-        ImGui::Separator();
+        // ImGui::Text("Settings");
+        // ImGui::Separator();
 
         ImGui::SliderInt("Gradients count", &perlin->numberOfGradients_, 2,
                          100);
@@ -137,7 +141,7 @@ int main() {
         if (!gradients.empty()) {
           for (size_t i = 0; i < gradients.size() - 1; ++i) {
             char buffer[32];
-            snprintf(buffer, sizeof(buffer), "Gradient##%zu", i);
+            snprintf(buffer, sizeof(buffer), "Gradient %zu##%zu", i, i);
             ImGui::SliderFloat(buffer, &gradients[i], -1.0f, 1.0f);
           }
         }
@@ -153,7 +157,7 @@ int main() {
       if (ImGui::Begin("Plot", nullptr,
                        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                            ImGuiWindowFlags_NoCollapse)) {
-        ImPlot::SetNextAxesLimits(0, noise.size(), -1.1, 1.1, ImGuiCond_Always);
+        ImPlot::SetNextAxesLimits(0, noise.size() * DELTA_X, -1.1, 1.1, ImGuiCond_Always);
         if (ImPlot::BeginPlot("My Plot", ImVec2(-1, -1))) {
           ImPlot::PlotLineG("Line", Getter, &noise, noise.size());
           ImPlot::EndPlot();
