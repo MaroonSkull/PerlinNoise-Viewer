@@ -10,3 +10,6 @@
 [submodule "dependencies/implot/implot"]
 	path = dependencies/implot/implot
 	url = https://github.com/epezent/implot.git
+[submodule "dependencies/implot3d"]
+	path = dependencies/implot3d
+	url = https://github.com/brenocq/implot3d.git

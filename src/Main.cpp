@@ -12,7 +12,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include <implot.h>
+// #include <implot.h>
+#include <implot3d.h>
 
 #include <Perlin.hpp>
 
@@ -44,6 +45,7 @@ void processInput(glfw::Window &window) {
     window.setShouldClose(true);
 }
 
+/*
 // Функция-генератор для ImPlot
 ImPlotPoint Getter(int idx, void *data) {
   auto *y_data = static_cast<std::vector<float> *>(data);
@@ -51,6 +53,7 @@ ImPlotPoint Getter(int idx, void *data) {
   float y = (*y_data)[idx];
   return ImPlotPoint(x, y);
 }
+*/
 
 /**
  * @brief Main function.
@@ -88,7 +91,8 @@ int main() {
     ImGui::GetIO().FontGlobalScale = 1.3f;
     ImGui_ImplOpenGL3_Init(); // #define IMGUI_IMPL_OPENGL_LOADER_GLAD
     ImGui_ImplGlfw_InitForOpenGL(window, true); // #define IMGUI_IMPL_GLFWD_API
-    ImPlot::CreateContext();
+    // ImPlot::CreateContext();
+    ImPlot3D::CreateContext();
 
     auto perlin = PimplPerlinFactory::createPerlin();
     perlin->numberOfDimensions_ = 1;
@@ -148,6 +152,7 @@ int main() {
       }
       ImGui::End();
 
+      /*
       // Для основного окна графика:
       ImGui::SetNextWindowPos(ImVec2(500, 0),
                               ImGuiCond_Always); // Сдвигаем вправо
@@ -157,13 +162,37 @@ int main() {
       if (ImGui::Begin("Plot", nullptr,
                        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                            ImGuiWindowFlags_NoCollapse)) {
-        ImPlot::SetNextAxesLimits(0, noise.size() * DELTA_X, -1.1, 1.1, ImGuiCond_Always);
-        if (ImPlot::BeginPlot("My Plot", ImVec2(-1, -1))) {
+        ImPlot::SetNextAxesLimits(0, noise.size() * DELTA_X, -1.1, 1.1,
+      ImGuiCond_Always); if (ImPlot::BeginPlot("My Plot", ImVec2(-1, -1))) {
           ImPlot::PlotLineG("Line", Getter, &noise, noise.size());
           ImPlot::EndPlot();
         }
       }
       ImGui::End();
+      */
+
+      ImGui::SetNextWindowPos(ImVec2(500, 0), ImGuiCond_Always);
+      ImGui::SetNextWindowSize(ImVec2(width - 500, height), ImGuiCond_Always);
+      if (ImGui::Begin("Plot 3D", nullptr,
+                       ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                           ImGuiWindowFlags_NoCollapse)) {
+        if (ImPlot3D::BeginPlot("My 3D Plot", ImVec2(-1, -1))) {
+          // Установка диапазонов осей (X: 0..max, Y: -1.1..1.1, Z: -1..1)
+          ImPlot3D::SetupAxesLimits(0, noise.size() * DELTA_X, -1.1, 1.1, -1.0,
+                                    1.0, ImGuiCond_Always);
+
+          std::vector<float> x(noise.size());
+          std::vector<float> z(noise.size());
+          for (int idx = 0; idx < noise.size(); ++idx) {
+            x[idx] = idx * DELTA_X;
+            z[idx] = 0.0f;
+          }
+          // Отображение 3D-линии
+          ImPlot3D::PlotLine("Line", x.data(), noise.data(), z.data(), noise.size());
+          ImPlot3D::EndPlot();
+        }
+        ImGui::End();
+      }
 
       // Render ImGui + ImPlot
       ImGui::Render();
@@ -173,7 +202,8 @@ int main() {
       glfw::pollEvents();
       window.swapBuffers();
     }
-    ImPlot::DestroyContext();
+    // ImPlot::DestroyContext();
+    ImPlot3D::DestroyContext();
     ImGui::DestroyContext();
   } catch (...) {
     eptr = std::current_exception();

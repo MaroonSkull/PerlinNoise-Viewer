@@ -61,6 +61,7 @@ set (dependenciesList
   glm::glm
   imgui
   implot
+  implot3d
 )
 
 # link libraries
